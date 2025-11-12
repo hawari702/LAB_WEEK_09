@@ -1,18 +1,16 @@
 package com.example.lab_week_09.ui.theme
 
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.ui.graphics.Color
 
-// Warna utama — tone ungu kebiruan dengan aksen coral
-val PurplePrimary = Color(0xFF6C63FF)
-val PurpleSecondary = Color(0xFF9381FF)
-val AccentCoral = Color(0xFFFF6F61)
+// Palet gelap sederhana
+val DarkColors = darkColorScheme(
+    primary        = Color(0xFF66D1C1), // toska untuk aksen/underline
+    onPrimary      = Color.Black,
 
-// Warna latar & teks
-val BackgroundDark = Color(0xFF121212)
-val SurfaceDark = Color(0xFF1E1E1E)
-val OnBackgroundLight = Color(0xFFECECEC)
+    background     = Color(0xFF121212),
+    onBackground   = Color(0xFFFFFFFF),
 
-// Warna tambahan
-val SuccessGreen = Color(0xFF00C896)
-val WarningYellow = Color(0xFFFFC857)
-val ErrorRed = Color(0xFFE63946)
+    surface        = Color(0xFF1E1E1E),
+    onSurface      = Color(0xFFFFFFFF)
+)

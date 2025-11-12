@@ -2,28 +2,20 @@ package com.example.lab_week_09.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// Kamu bisa ganti fontFamily ke Font(R.font.nama_font) kalau punya file font di res/font/
-val CustomTypography = Typography(
+// Tipografi agar judul & item mirip contoh
+val AppTypography = Typography(
     titleLarge = TextStyle(
-        fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Bold,
-        fontSize = 28.sp,
-        letterSpacing = 0.3.sp
+        fontSize = 20.sp,
+        fontWeight = FontWeight.SemiBold
     ),
     bodySmall = TextStyle(
-        fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 22.sp
+        fontSize = 12.sp
     ),
     labelMedium = TextStyle(
-        fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
-        letterSpacing = 1.sp
+        fontWeight = FontWeight.Medium
     )
 )
