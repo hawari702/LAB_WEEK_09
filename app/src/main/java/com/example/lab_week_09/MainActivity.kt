@@ -7,16 +7,19 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.lab_week_09.ui.theme.LAB_WEEK_09Theme
+import com.example.lab_week_09.ui.theme.OnBackgroundItemText
+import com.example.lab_week_09.ui.theme.OnBackgroundTitleText
+import com.example.lab_week_09.ui.theme.PrimaryTextButton
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +50,7 @@ fun Home() {
     ) {
         item {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = stringResource(id = R.string.enter_item))
+                OnBackgroundTitleText(text = stringResource(id = R.string.enter_item))
                 Spacer(Modifier.height(8.dp))
                 TextField(
                     value = input,
@@ -56,24 +59,27 @@ fun Home() {
                     modifier = Modifier.fillMaxWidth(0.9f)
                 )
                 Spacer(Modifier.height(12.dp))
-                Button(
+                PrimaryTextButton(
+                    text = stringResource(id = R.string.button_click),
                     onClick = {
                         val name = input.trim()
                         if (name.isNotEmpty()) {
                             names.add(name)
                             input = ""
                         }
-                    },
-                    shape = CircleShape
-                ) {
-                    Text(text = stringResource(id = R.string.button_click))
-                }
+                    }
+                )
                 Spacer(Modifier.height(12.dp))
             }
         }
 
         items(names) { name ->
-            Text(text = name, modifier = Modifier.padding(vertical = 6.dp))
+            OnBackgroundItemText(
+                text = name,
+                // jarak antar item
+                // (pakai Spacer juga bisa; di sini cukup padding saja)
+            )
+            Spacer(modifier = Modifier.height(6.dp))
         }
     }
 }
