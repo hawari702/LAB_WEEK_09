@@ -29,6 +29,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.lab_week_09.ui.theme.*
 
+// Moshi
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+
 // ==== DATA ====
 data class Student(var name: String)
 
@@ -61,8 +66,8 @@ fun App(navController: NavHostController) {
         startDestination = "home"
     ) {
         composable("home") {
-            Home { listAsString ->
-                val safe = Uri.encode(listAsString) // aman di route
+            Home { jsonString ->
+                val safe = Uri.encode(jsonString) // aman di route
                 navController.navigate("resultContent/?listData=$safe")
             }
         }
@@ -70,8 +75,8 @@ fun App(navController: NavHostController) {
             "resultContent/?listData={listData}",
             arguments = listOf(navArgument("listData") { type = NavType.StringType })
         ) { backStackEntry ->
-            val listString = backStackEntry.arguments?.getString("listData").orEmpty()
-            ResultContent(listString)
+            val listJson = backStackEntry.arguments?.getString("listData").orEmpty()
+            ResultContent(listJson)
         }
     }
 }
@@ -88,6 +93,11 @@ fun Home(
     }
     var inputField by remember { mutableStateOf(Student("")) }
 
+    // Moshi adapter untuk List<Student>
+    val moshi = remember { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
+    val listType = remember { Types.newParameterizedType(List::class.java, Student::class.java) }
+    val adapter = remember { moshi.adapter<List<Student>>(listType) }
+
     HomeContent(
         listData = listData,
         inputField = inputField,
@@ -100,7 +110,9 @@ fun Home(
             }
         },
         navigateFromHomeToResult = {
-            navigateFromHomeToResult(listData.toList().toString())
+            // >>> Kirim sebagai JSON (BONUS)
+            val json = adapter.toJson(listData.toList())
+            navigateFromHomeToResult(json)
         }
     )
 }
@@ -131,7 +143,7 @@ fun HomeContent(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     modifier = Modifier.fillMaxWidth(0.9f),
                     colors = TextFieldDefaults.colors(
-                        // kotak input gelap
+                        // kotak input gelap (UI tetap)
                         focusedContainerColor   = MaterialTheme.colorScheme.surface,
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                         disabledContainerColor  = MaterialTheme.colorScheme.surface,
@@ -173,17 +185,31 @@ fun HomeContent(
 }
 
 // ==== RESULT ====
+// Menerima JSON, parse ke List<Student>, dan tampilkan dengan LazyColumn.
+// UI tetap dark + tidak nabrak status bar.
 @Composable
-fun ResultContent(listData: String) {
-    Column(
+fun ResultContent(listDataJson: String) {
+    // Moshi adapter
+    val moshi = remember { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
+    val listType = remember { Types.newParameterizedType(List::class.java, Student::class.java) }
+    val adapter = remember { moshi.adapter<List<Student>>(listType) }
+
+    val list: List<Student> = remember(listDataJson) {
+        runCatching { adapter.fromJson(listDataJson) }.getOrNull().orEmpty()
+    }
+
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()     // <-- atau systemBarsPadding()
-            .padding(vertical = 5.dp)
+            .statusBarsPadding() // biar tidak nabrak jam/status bar
+            .padding(vertical = 5.dp, horizontal = 16.dp)
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OnBackgroundItemText(text = listData)
+        items(list) { item ->
+            OnBackgroundItemText(text = item.name)
+            Spacer(Modifier.height(6.dp))
+        }
     }
 }
 
