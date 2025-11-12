@@ -6,14 +6,16 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.shape.CircleShape
 import com.example.lab_week_09.ui.theme.LAB_WEEK_09Theme
 
 class MainActivity : ComponentActivity() {
@@ -25,8 +27,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // Panggil Home dengan list contoh seperti di gambar
-                    Home(listOf("Tanu", "Tina", "Tono"))
+                    Home()
                 }
             }
         }
@@ -34,8 +35,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Home(items: List<String>) {
+fun Home() {
     var input by remember { mutableStateOf("") }
+    val names = remember { mutableStateListOf("Tanu", "Tina", "Tono") }
 
     LazyColumn(
         modifier = Modifier
@@ -50,12 +52,18 @@ fun Home(items: List<String>) {
                 TextField(
                     value = input,
                     onValueChange = { input = it },
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    modifier = Modifier.fillMaxWidth(0.9f)
                 )
                 Spacer(Modifier.height(12.dp))
                 Button(
-                    onClick = { /* no-op sesuai tutor */ },
+                    onClick = {
+                        val name = input.trim()
+                        if (name.isNotEmpty()) {
+                            names.add(name)
+                            input = ""
+                        }
+                    },
                     shape = CircleShape
                 ) {
                     Text(text = stringResource(id = R.string.button_click))
@@ -64,12 +72,8 @@ fun Home(items: List<String>) {
             }
         }
 
-        items(items) { item ->
-            Text(
-                text = item,
-                modifier = Modifier
-                    .padding(vertical = 6.dp)
-            )
+        items(names) { name ->
+            Text(text = name, modifier = Modifier.padding(vertical = 6.dp))
         }
     }
 }
@@ -82,7 +86,7 @@ fun PreviewHome() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Home(listOf("Tanu", "Tina", "Tono"))
+            Home()
         }
     }
 }
